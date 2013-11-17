@@ -37,24 +37,28 @@ EXCLUDE_DIRS = config.get('backup','EXCLUDE_DIRS').split(';')
 EXCLUDE_FILES = config.get('backup','EXCLUDE_FILES').split(';')
 
 BACKUP_ROOT = config.get("backup","BACKUP_ROOT")
-backup_paths = config.get("backup","BACKUP_PATHS")
-DIRS_TO_MIRROR=[]
-for path in backup_paths.split(';'):
-    s = path.split('|')
-    source_path = s[0]
-    if len(s)==1:
-        target_path = os.path.split(s[0])[-1]
-    elif len(s)==2:
-        target_path = s[1]
-    else:
-        raise ValueError("At most 1 pipe (|) per line: %s"%(str(path)))
-        
-    if not os.path.exists(source_path):
-        raise ValueError("Path %s does not exist." % source_path)
-    DIRS_TO_MIRROR.append((source_path, target_path))
+SLOTTED_BACKUP_PATHS = config.get("backup","BACKUP_PATHS")
+SINGLESLOT_BACKUP_PATHS = config.get("backup", "SINGLESLOT_BACKUP_PATHS")
+
+def get_dirs_to_mirror(backup_paths):
+    dirs=[]
+    for path in backup_paths.split(';'):
+        s = path.split('|')
+        source_path = s[0]
+        if len(s)==1:
+            target_path = os.path.split(s[0])[-1]
+        elif len(s)==2:
+            target_path = s[1]
+        else:
+            raise ValueError("At most 1 pipe (|) per line: %s"%(str(path)))
+            
+        if not os.path.exists(source_path):
+            raise ValueError("Path %s does not exist." % source_path)
+        dirs.append((source_path, target_path))
+    return dirs
 
 print "BACKUP_ROOT:",BACKUP_ROOT
-print "DIRS",DIRS_TO_MIRROR
+# print "DIRS",DIRS_TO_MIRROR
 
 class RoboError(RuntimeError):
     def __init__(self, why, errorlevel):
@@ -176,9 +180,20 @@ def _backup(backup_mode = TOWER_OF_HANOI):
     shutil.copy2(__file__, backup_base_path)
     shutil.copy2('backup.ini', backup_base_path)
 
-    for (path,dest_dir_end) in DIRS_TO_MIRROR:
+    for (path,dest_dir_end) in get_dirs_to_mirror(SLOTTED_BACKUP_PATHS):
 
         target_path = '%s\\%s'%(backup_base_path, dest_dir_end)
+        try:
+            run_a_backup(path, target_path)
+        except RoboError, e:
+            errors.append("ERROR %d: %s -> %s"%(e.errorlevel,path,target_path))
+            print e.errorlevel
+        except DryRunException, e:
+            errors.append("Nothing happened - dry run.")
+
+    for (path,dest_dir_end) in get_dirs_to_mirror(SINGLESLOT_BACKUP_PATHS):
+
+        target_path = '%s\\%s\\%s'%(BACKUP_ROOT, "single", dest_dir_end)
         try:
             run_a_backup(path, target_path)
         except RoboError, e:
@@ -254,7 +269,6 @@ def _restore():
 def backup():
     try:
         oslockedaction.OSLockedAction(target=_backup, timeoutDelay = 0.0, DEBUG = False)
-        sys.exit(0) 
     except:
         traceback.print_exc()
 

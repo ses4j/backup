@@ -1,3 +1,5 @@
+""" Implementation of the tower-of-hanoi backup rotation pattern. """
+
 import os
 
 def hanoi(numDisks):

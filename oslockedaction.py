@@ -1,3 +1,9 @@
+""" oslockedaction.py implements "one-at-a-time" process execution by creating 
+a lock file during execution of a method.
+
+(c) 2007 Scott Stafford
+""" 
+
 class LockFileExists(RuntimeError): pass
 
 class OSLockedAction:
@@ -17,8 +23,6 @@ class OSLockedAction:
             If it is ==0, it will try once and if lockfile exists, it will give up and throw LockFileExists.
         retryPeriod is a float in seconds.
         description will be dumped into the lockfile, so you can see what wrote it.
-
-        Author: Scott Stafford 2007
         """
         import time,os,sys
         if lockfile is None:

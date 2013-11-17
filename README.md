@@ -2,13 +2,13 @@
 Scott's Backup Script
 =====================
 
-My personal backup script, uses a tower-of-hanoi slot alternation to keep old backups.
+My personal backup script, uses a [tower-of-hanoi slot alternation](http://en.wikipedia.org/wiki/Backup_rotation_scheme#Tower_of_Hanoi) to keep old backups.
 
 INSTALLATION and CONFIGURATION
 ------------------------------
 
 First, install prerequisites:
- * Python (tested with version 2.4)
+ * Python (tested with version 2.4-2.7)
  * If Win32 for Python is installed, it'll use that a bit too.
 
 Put all backup_script files into some directory, say C:\backup_script.

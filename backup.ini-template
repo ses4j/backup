@@ -1,0 +1,9 @@
+[backup]
+BACKUP_ROOT=F:\backup\w500
+
+# NUMBER_OF_SLOTS is how many hanoi slots to be willing to use up...
+NUMBER_OF_SLOTS = 3
+EXCLUDE_DIRS = Temporary Internet Files;Cache;Recent;Cookies;iPod Photo Cache;MachineKeys;.svn;CVS;.git
+EXCLUDE_FILES = ~$*.*;*.bak;*.tmp;index.dat;usrclass.dat*;ntuser.dat*;*.lock;*.swp;*.pyc;*.obj;*.pch;*.ilk;*.pdb;*.a;*.lib;*.exp
+
+BACKUP_PATHS=c:\work|work_w500;C:\pix|pix_w500;C:\Users\Scott\AppData\Local\Google\Picasa2|ScottPicasaDB_w500
